@@ -3,11 +3,11 @@ import Pipeline from './pipeline';
 import { isConstructor } from './helpers/function';
 import type {
   RouteLocationNormalized,
+  RouteLocationRaw,
   RouteParamsRaw,
   Router as VueRouter,
   RouteRecordName,
 } from 'vue-router';
-import type { Middleware, RoutingContext, Constructor } from './index.d';
 
 class Router {
   private static instance: VueRouter;
@@ -171,3 +171,31 @@ export function normalizeRoute(routeName: RouteRecordName, params?: RouteParamsR
     throw new Error(`Route name "${routeName.toString()}" could not be resolved.${message}`);
   }
 }
+
+export type Destination = RouteLocationNormalized | boolean;
+
+export type RoutingContext = {
+  from: RouteLocationNormalized;
+}
+
+export type Next = (destination: RouteLocationNormalized) => Promise<Destination>;
+
+export type MiddlewareHandler = (
+  destination: RouteLocationNormalized, next: Next, context: RoutingContext,
+) => Promise<Destination>;
+
+export type Middleware = {
+  handle: MiddlewareHandler;
+}
+
+export type Constructor<T = any> = new (...arguments_: any[]) => T;
+
+export type Callable<T extends any[] = any[]> = (...arguments_: T) => void | Promise<void>;
+
+export type AnyFunction = (...arguments_: any[]) => any;
+
+export type InferredAsyncFunction<T> = T extends (...arguments_: infer A) => infer R
+  ? R extends Promise<any>
+    ? (...arguments_: A) => R
+    : never
+  : never;
