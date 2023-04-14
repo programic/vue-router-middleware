@@ -1,7 +1,7 @@
 {
   "name": "@programic/vue-router-middleware",
   "description": "Make complex route middleware logic look easy and readable!",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "./dist/index.js",
   "module": "./dist/index.cjs",
   "type": "module",
