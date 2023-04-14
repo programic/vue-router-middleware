@@ -17,12 +17,6 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "baseUrl": ".",
-    "paths": {
-      "~components": ["./src/modules/components/*"],
-      "~layouts": ["./src/modules/layouts/*"],
-      "~composables": ["./src/modules/composables/*"],
-      "~icons": ["./src/modules/icons/*"]
-    },
     "lib": ["esnext", "dom"],
     "types": [
       "node",
@@ -30,15 +24,14 @@
       "vite/client"
     ],
   },
-  "files": ["./shims-vue.d.ts"],
+
   "include": [
-    "src/modules"
+    "src"
   ],
   "exclude": [
     "../../node_modules",
     "node_modules",
     "dist",
-    "**/*.stories.js",
     "**/*.spec.ts"
   ]
 }
