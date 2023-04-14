@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "ignoreDeprecations": "5.0",
+    "composite": true,
+    "lib": [],
+    "types": ["node", "jsdom"],
+    "outDir": "dist"
+  },
+  "files": ["./shims-vue.d.ts"],
+  "include": [
+    "src/modules",
+    "src/stories"
+  ],
+  "exclude": [
+    "node_modules",
+  ]
+}

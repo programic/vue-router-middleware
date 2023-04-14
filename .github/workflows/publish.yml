@@ -1,0 +1,50 @@
+name: Publish to NPM workspace file
+on:
+  release:
+    types: [created]
+jobs:
+  setup-environment:
+    name: Setup environment ✨
+    uses: programic/reusable-github-workflows/.github/workflows/setup-environment.yml@custom-build-directory
+
+  build-frontend:
+    name: Building the frontend 🏗️
+    needs: setup-environment
+    uses: programic/reusable-github-workflows/.github/workflows/yarn-build.yml@v2.0.2
+    with:
+      project_name: programic-vue-router-middleware
+      project_environment: ${{needs.setup-environment.outputs.project_environment }}
+      working-directory: ./
+    secrets: inherit
+
+  test-frontend:
+    name: Testing the frontend 👩‍🔬🧑‍🔬
+    needs: setup-environment
+    uses: programic/reusable-github-workflows/.github/workflows/yarn-test.yml@v2.0.2
+    with:
+      project_name: programic-vue-router-middleware
+      working-directory: ./
+    secrets: inherit
+
+  publish-frontend:
+    name: Publishing the frontend 🚢📦
+    runs-on: ubuntu-latest
+    needs: [setup-environment, test-frontend, build-frontend]
+    steps:
+      - name: Check package version
+        uses: technote-space/package-version-check-action@v1
+        with:
+          COMMIT_DISABLED: 1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: yarn install --immutable
+        working-directory: ./
+      - run: |
+          npm config set //registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN
+          npm publish --public
+        working-directory: ./
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

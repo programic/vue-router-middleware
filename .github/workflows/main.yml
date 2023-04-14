@@ -1,0 +1,54 @@
+name: Main workspace file
+on:
+  push:
+    branches: ["main", "release", "develop"]
+  pull_request:
+    types: [reopened, synchronize, labeled, unlabeled]
+jobs:
+  check-labels:
+    name: Check labels for Pull request
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: docker://agilepathway/pull-request-label-checker:v1.2.9
+        with:
+          one_of: enhancement,bug,skip-changelog,dependency
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+
+  setup-environment:
+    name: Setup environment ✨
+    uses: programic/reusable-github-workflows/.github/workflows/setup-environment.yml@v2.0.2
+
+  build-frontend:
+    name: Building the frontend 🏗️
+    if: github.event_name != 'pull_request'
+    needs: setup-environment
+    uses: programic/reusable-github-workflows/.github/workflows/yarn-build.yml@v2.0.2
+    with:
+      project_name: programic-vue-router-middleware
+      build-command: "build:storybook"
+      project_environment: ${{needs.setup-environment.outputs.project_environment }}
+      working-directory: ./
+    secrets: inherit
+
+  test-frontend:
+    name: Testing the frontend 👩‍🔬🧑‍🔬
+    needs: setup-environment
+    uses: programic/reusable-github-workflows/.github/workflows/yarn-test.yml@v2.0.2
+    with:
+      project_name: programic-vue-router-middleware
+      working-directory: ./
+    secrets: inherit
+
+  deploy-frontend:
+    name: Deploying the frontend 🚢📦
+    if: github.event_name != 'pull_request'
+    needs: [setup-environment, test-frontend, build-frontend]
+    uses: programic/reusable-github-workflows/.github/workflows/deploy-to-do.yml@v2.0.2
+    with:
+      project_name: programic-vue-router-middleware
+      project_environment: ${{needs.setup-environment.outputs.project_environment }}
+      environment: ${{needs.setup-environment.outputs.environment }}
+      working-directory: ./
+      artifact_extract_path: ./
+    secrets: inherit

@@ -1,0 +1,44 @@
+{
+  // https://v3.nuxtjs.org/concepts/typescript
+  "compilerOptions": {
+    "outDir": "dist/src",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowJs": true,
+    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "~components": ["./src/modules/components/*"],
+      "~layouts": ["./src/modules/layouts/*"],
+      "~composables": ["./src/modules/composables/*"],
+      "~icons": ["./src/modules/icons/*"]
+    },
+    "lib": ["esnext", "dom"],
+    "types": [
+      "node",
+      "vitest",
+      "vite/client"
+    ],
+  },
+  "files": ["./shims-vue.d.ts"],
+  "include": [
+    "src/modules"
+  ],
+  "exclude": [
+    "../../node_modules",
+    "node_modules",
+    "dist",
+    "**/*.stories.js",
+    "**/*.spec.ts"
+  ]
+}
